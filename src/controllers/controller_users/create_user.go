@@ -6,48 +6,42 @@ import (
 	"api-nos-golang/src/repositories"
 	"api-nos-golang/src/utils"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	bodyRequest, erro := ioutil.ReadAll(r.Body)
 
 	if erro != nil {
-		log.Fatal(erro)
+		utils.ResponseError(w, http.StatusUnprocessableEntity, erro)
+		return
 	}
 
 	var user models.Usuario
 
 	if erro = json.Unmarshal(bodyRequest, &user); erro != nil {
-		log.Fatal(erro)
+		utils.ResponseError(w, http.StatusBadRequest, erro)
+		return
 	}
 
 	db, erro := db.Connect()
 
 	if erro != nil {
-		log.Fatal(erro)
-	}
-
-	//repositories have the responsibility of connecting with the database
-	repository := repositories.NewRepositoryUsers(db)
-	userID, erro := repository.Create(user)
-
-	if erro != nil {
-		log.Fatal(erro)
-	}
-
-	w.WriteHeader(http.StatusOK)
-
-	responseJson, erro := utils.ResponseJSON(fmt.Sprintf("ID Inserido: %d", userID))
-
-	if erro != nil {
-		w.Write([]byte(fmt.Sprintf("Something wrong happened: %v", erro)))
+		utils.ResponseError(w, http.StatusInternalServerError, erro)
 		return
 	}
 
-	w.Write(responseJson)
+	defer db.Close()
+
+	//repositories have the responsibility of connecting with the database
+	repository := repositories.NewRepositoryUsers(db)
+	user.ID, erro = repository.Create(user)
+
+	if erro != nil {
+		utils.ResponseError(w, http.StatusInternalServerError, erro)
+		return
+	}
+
+	utils.ResponseJSON(w, http.StatusCreated, user)
 }

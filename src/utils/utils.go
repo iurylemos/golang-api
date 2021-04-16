@@ -1,18 +1,39 @@
 package utils
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"log"
+	"net/http"
+)
 
-type response struct {
-	Message string `json:"message"`
+// type response struct {
+// 	Message string `json:"message"`
+// }
+
+// func ResponseJSON(message string) ([]byte, error) {
+// 	responseStruct := response{Message: message}
+// 	responseJson, erro := json.Marshal(responseStruct)
+
+// 	if erro != nil {
+// 		return nil, erro
+// 	}
+
+// 	return responseJson, nil
+// }
+
+func ResponseError(w http.ResponseWriter, statusCode int, erro error) {
+	// struct already filling out
+	ResponseJSON(w, statusCode, struct {
+		Erro string `json:"erro"`
+	}{
+		Erro: erro.Error(),
+	})
 }
 
-func ResponseJSON(message string) ([]byte, error) {
-	responseStruct := response{Message: message}
-	responseJson, erro := json.Marshal(responseStruct)
+func ResponseJSON(w http.ResponseWriter, statusCode int, data interface{}) {
+	w.WriteHeader(statusCode)
 
-	if erro != nil {
-		return nil, erro
+	if erro := json.NewEncoder(w).Encode(data); erro != nil {
+		log.Fatal(erro)
 	}
-
-	return responseJson, nil
 }
