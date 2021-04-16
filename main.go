@@ -1,6 +1,7 @@
 package main
 
 import (
+	"api-nos-golang/src/config"
 	"api-nos-golang/src/routes"
 	"fmt"
 	"log"
@@ -8,8 +9,12 @@ import (
 )
 
 func main() {
+	config.LoadingEnviroment()
+
+	// fmt.Println(config.ConnectionDataBase)
+
 	r := routes.CreateRoutes()
 
-	fmt.Printf("Running api in port %s", "5000")
-	log.Fatal(http.ListenAndServe(":5000", r))
+	fmt.Printf("Running api in port %d", config.Port)
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Port), r))
 }
