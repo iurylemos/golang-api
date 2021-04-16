@@ -15,6 +15,6 @@ func main() {
 
 	r := routes.CreateRoutes()
 
-	fmt.Printf("Running api in port %d", config.Port)
+	fmt.Printf("Listening in port %d", config.Port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.Port), r))
 }
