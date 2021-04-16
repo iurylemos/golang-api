@@ -41,7 +41,7 @@ func LoadingEnviroment() {
 
 	ConnectionDataBase = fmt.Sprintf("%s:%s@/%s?charset=utf8&parseTime=True&loc=Local",
 		os.Getenv("DB_USER"),
-		os.Getenv("DB_SENHA"),
+		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_NOME"),
 	)
 }

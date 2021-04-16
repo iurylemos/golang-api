@@ -13,7 +13,7 @@ import (
 )
 
 func CreateUser(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Creating users"))
+	w.Header().Set("Content-Type", "application/json")
 	bodyRequest, erro := ioutil.ReadAll(r.Body)
 
 	if erro != nil {

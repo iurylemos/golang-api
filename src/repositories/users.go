@@ -21,7 +21,7 @@ func NewRepositoryUsers(db *sql.DB) *rep_users {
 // uint64 to no have values negatives
 func (rep rep_users) Create(user models.Usuario) (uint64, error) {
 
-	statement, erro := rep.db.Prepare("INSERT INTO usuarios (nome, nick, email, senha) VALUES (? ? ? ?)")
+	statement, erro := rep.db.Prepare("INSERT INTO usuarios (nome, nick, email, senha) VALUES (?, ?, ?, ?)")
 
 	if erro != nil {
 		return 0, erro
