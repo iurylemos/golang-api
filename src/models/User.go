@@ -19,8 +19,8 @@ type Usuario struct {
 }
 
 // method prepare is used to validate and format data that arrive in request
-func (user *Usuario) Prepare() error {
-	if erro := user.validate(); erro != nil {
+func (user *Usuario) Prepare(stage string) error {
+	if erro := user.validate(stage); erro != nil {
 		return erro
 	}
 
@@ -28,7 +28,7 @@ func (user *Usuario) Prepare() error {
 	return nil
 }
 
-func (user *Usuario) validate() error {
+func (user *Usuario) validate(stage string) error {
 	if user.Nome == "" {
 		return errors.New("Nome é obrigatório. Não pode ficar em branco")
 	}
@@ -41,7 +41,7 @@ func (user *Usuario) validate() error {
 		return errors.New("Email é obrigatório. Não pode ficar em branco")
 	}
 
-	if user.Senha == "" {
+	if stage == "register" && user.Senha == "" {
 		return errors.New("Senha é obrigatório. Não pode ficar em branco")
 	}
 

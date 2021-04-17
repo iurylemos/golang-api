@@ -109,3 +109,19 @@ func (rep rep_users) FindID(id uint64) (models.Usuario, error) {
 
 	return user, nil
 }
+
+func (rep rep_users) Update(id uint64, user models.Usuario) error {
+	statement, erro := rep.db.Prepare("UPDATE usuarios SET nome = ?, nick = ?, email = ? WHERE id = ?")
+
+	if erro != nil {
+		return erro
+	}
+
+	defer statement.Close()
+
+	if _, erro = statement.Exec(user.Nome, user.Nick, user.Email, id); erro != nil {
+		return erro
+	}
+
+	return nil
+}
