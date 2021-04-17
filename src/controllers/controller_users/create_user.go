@@ -25,6 +25,12 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// verify if the user be prepared for being insert in database
+	if erro = user.Prepare(); erro != nil {
+		utils.ResponseError(w, http.StatusBadRequest, erro)
+		return
+	}
+
 	db, erro := db.Connect()
 
 	if erro != nil {
