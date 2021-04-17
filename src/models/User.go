@@ -1,6 +1,7 @@
 package models
 
 import (
+	"api-nos-golang/src/middlewares/security"
 	"errors"
 	"strings"
 	"time"
@@ -26,7 +27,10 @@ func (user *Usuario) Prepare(stage string) error {
 		return erro
 	}
 
-	user.formatter()
+	if erro := user.formatter(stage); erro != nil {
+		return erro
+	}
+
 	return nil
 }
 
@@ -55,8 +59,20 @@ func (user *Usuario) validate(stage string) error {
 	return nil
 }
 
-func (user *Usuario) formatter() {
+func (user *Usuario) formatter(stage string) error {
 	user.Nome = strings.TrimSpace(user.Nome)
 	user.Nick = strings.TrimSpace(user.Nick)
 	user.Email = strings.TrimSpace(user.Email)
+
+	if stage == "register" {
+		passwordWithHash, erro := security.Hash(user.Senha)
+
+		if erro != nil {
+			return erro
+		}
+
+		user.Senha = string(passwordWithHash)
+	}
+
+	return nil
 }
