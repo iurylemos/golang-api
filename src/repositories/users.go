@@ -3,6 +3,7 @@ package repositories
 import (
 	"api-nos-golang/src/models"
 	"database/sql"
+	"fmt"
 )
 
 // this struct is used to received database
@@ -42,4 +43,43 @@ func (rep rep_users) Create(user models.Usuario) (uint64, error) {
 	}
 
 	return uint64(lastIDInsert), nil
+}
+
+//Find users for nick or name
+func (rep rep_users) Find(nameOrNick string) ([]models.Usuario, error) {
+	nameOrNick = fmt.Sprintf("%%%s%%", nameOrNick) // %nameOrNick%
+
+	rows, erro := rep.db.Query(
+		"SELECT id, nome, nick, email, criadoEm FROM usuarios WHERE nome LIKE ? OR nick LIKE ?",
+		nameOrNick, nameOrNick,
+	)
+
+	if erro != nil {
+		return nil, erro
+	}
+
+	defer rows.Close()
+
+	var users []models.Usuario
+
+	for rows.Next() {
+		var user models.Usuario
+		// SCAN to insert values in user
+
+		if erro = rows.Scan(
+			&user.ID,
+			&user.Nome,
+			&user.Nick,
+			&user.Email,
+			&user.CriadoEm,
+		); erro != nil {
+			return nil, erro
+		}
+
+		// insert user inside slice of users (append = acrescentar)
+		users = append(users, user)
+
+	}
+
+	return users, nil
 }
