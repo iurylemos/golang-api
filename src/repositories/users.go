@@ -141,3 +141,24 @@ func (rep rep_users) Delete(id uint64) error {
 
 	return nil
 }
+
+// return id and password with hash this user
+func (rep rep_users) FindForEmail(email string) (models.Usuario, error) {
+	rows, erro := rep.db.Query("SELECT id, senha FROM usuarios WHERE email = ?", email)
+
+	if erro != nil {
+		return models.Usuario{}, erro
+	}
+
+	defer rows.Close()
+
+	var user models.Usuario
+
+	if rows.Next() {
+		if erro = rows.Scan(&user.ID, &user.Senha); erro != nil {
+			return models.Usuario{}, erro
+		}
+	}
+
+	return user, nil
+}
