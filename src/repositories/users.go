@@ -125,3 +125,19 @@ func (rep rep_users) Update(id uint64, user models.Usuario) error {
 
 	return nil
 }
+
+func (rep rep_users) Delete(id uint64) error {
+	statement, erro := rep.db.Prepare("DELETE FROM usuarios WHERE id = ?")
+
+	if erro != nil {
+		return erro
+	}
+
+	defer statement.Close()
+
+	if _, erro = statement.Exec(id); erro != nil {
+		return erro
+	}
+
+	return nil
+}
