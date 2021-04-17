@@ -83,3 +83,29 @@ func (rep rep_users) Find(nameOrNick string) ([]models.Usuario, error) {
 
 	return users, nil
 }
+
+func (rep rep_users) FindID(id uint64) (models.Usuario, error) {
+	rows, erro := rep.db.Query("SELECT id, nome, nick, email, criadoEm FROM usuarios WHERE id = ?", id)
+
+	if erro != nil {
+		return models.Usuario{}, erro
+	}
+
+	defer rows.Close()
+
+	var user models.Usuario
+
+	if rows.Next() {
+		if erro = rows.Scan(
+			&user.ID,
+			&user.Nome,
+			&user.Nick,
+			&user.Email,
+			&user.CriadoEm,
+		); erro != nil {
+			return models.Usuario{}, erro
+		}
+	}
+
+	return user, nil
+}
