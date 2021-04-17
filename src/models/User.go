@@ -4,6 +4,8 @@ import (
 	"errors"
 	"strings"
 	"time"
+
+	"github.com/badoux/checkmail"
 )
 
 // using for first time omitempty
@@ -30,19 +32,23 @@ func (user *Usuario) Prepare(stage string) error {
 
 func (user *Usuario) validate(stage string) error {
 	if user.Nome == "" {
-		return errors.New("Nome é obrigatório. Não pode ficar em branco")
+		return errors.New("nome é obrigatório e não pode ficar em branco")
 	}
 
 	if user.Nick == "" {
-		return errors.New("Nick é obrigatório. Não pode ficar em branco")
+		return errors.New("nick é obrigatório e não pode ficar em branco")
 	}
 
 	if user.Email == "" {
-		return errors.New("Email é obrigatório. Não pode ficar em branco")
+		return errors.New("email é obrigatório e não pode ficar em branco")
+	}
+
+	if erro := checkmail.ValidateFormat(user.Email); erro != nil {
+		return errors.New("email com formato inválido")
 	}
 
 	if stage == "register" && user.Senha == "" {
-		return errors.New("Senha é obrigatório. Não pode ficar em branco")
+		return errors.New("senha é obrigatório e não pode ficar em branco")
 	}
 
 	// return value default of erro
