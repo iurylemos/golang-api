@@ -2,6 +2,10 @@ package authentication
 
 import (
 	"api-nos-golang/src/config"
+	"errors"
+	"fmt"
+	"net/http"
+	"strings"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -26,4 +30,46 @@ func CreateToken(userID uint64) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, permissions)
 	return token.SignedString([]byte(config.SecretKey))
+}
+
+func ValidateToken(r *http.Request) error {
+	tokenString := extractToken(r)
+
+	token, erro := jwt.Parse(tokenString, returnKeyVerification)
+	if erro != nil {
+		return erro
+	}
+
+	// return all the claims that was settings in function create token
+	// token valid verify if this token is valid or not
+	if _, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		return nil
+	}
+	return errors.New("token invalid")
+}
+
+func extractToken(r *http.Request) string {
+	token := r.Header.Get("Authorization")
+
+	// Bearer eyashuhkekaaaaaE02y
+
+	//verify if lenght this string have space between two words
+	if len(strings.Split(token, " ")) == 2 {
+		// if exists two words I do the return the two word
+		// that contain a token
+		return strings.Split(token, " ")[1]
+	}
+
+	return ""
+}
+
+func returnKeyVerification(token *jwt.Token) (interface{}, error) {
+	// verify method signin
+	if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+		return nil, fmt.Errorf("method signin unexpected %v", token.Header["alg"])
+	}
+
+	// if not happened no one error then i was this that i wanted
+
+	return config.SecretKey, nil
 }

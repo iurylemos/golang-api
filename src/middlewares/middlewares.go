@@ -1,6 +1,8 @@
 package middlewares
 
 import (
+	"api-nos-golang/src/middlewares/authentication"
+	"api-nos-golang/src/utils"
 	"fmt"
 	"log"
 	"net/http"
@@ -12,6 +14,10 @@ func Authenticate(next http.HandlerFunc) http.HandlerFunc {
 		fmt.Println("called function to valid token and then execute function that come in parameters")
 		//function "next" go execute function that be coming of parameters of function
 		//this case is the function "route.Function"
+		if erro := authentication.ValidateToken(r); erro != nil {
+			utils.ResponseError(w, http.StatusUnauthorized, erro)
+			return
+		}
 		next(w, r)
 	}
 }
