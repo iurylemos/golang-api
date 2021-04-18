@@ -2,11 +2,13 @@ package controller_login
 
 import (
 	"api-nos-golang/src/db"
+	"api-nos-golang/src/middlewares/authentication"
 	"api-nos-golang/src/middlewares/security"
 	"api-nos-golang/src/models"
 	"api-nos-golang/src/repositories"
 	"api-nos-golang/src/utils"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -50,5 +52,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.ResponseJSON(w, http.StatusOK, "You are logged. Congratulations")
+	token, _ := authentication.CreateToken(userSalvedInDB.ID)
+
+	utils.ResponseJSON(w, http.StatusOK, fmt.Sprintf("Congrulations %s", token))
 }

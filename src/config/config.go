@@ -10,9 +10,12 @@ import (
 )
 
 // string connection with dabase and port that api is running
+// SecretKey is the key used to auto self sign token
+
 var (
 	ConnectionDataBase = ""
 	Port               = 0
+	SecretKey          []byte
 )
 
 // loading going begin the variables of enviroment
@@ -44,4 +47,6 @@ func LoadingEnviroment() {
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_NOME"),
 	)
+
+	SecretKey = []byte(os.Getenv("SECRET_KEY"))
 }
