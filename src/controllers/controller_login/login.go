@@ -52,7 +52,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, _ := authentication.CreateToken(userSalvedInDB.ID)
+	token, erro := authentication.CreateToken(userSalvedInDB.ID)
+
+	if erro != nil {
+		utils.ResponseError(w, http.StatusInternalServerError, erro)
+		return
+	}
 
 	utils.ResponseJSON(w, http.StatusOK, fmt.Sprintf("Congrulations %s", token))
 }
