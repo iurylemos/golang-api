@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -72,4 +73,28 @@ func returnKeyVerification(token *jwt.Token) (interface{}, error) {
 	// if not happened no one error then i was this that i wanted
 
 	return config.SecretKey, nil
+}
+
+// return user id that be salved in token
+func ExtractUserID(r *http.Request) (uint64, error) {
+	tokenString := extractToken(r)
+
+	token, erro := jwt.Parse(tokenString, returnKeyVerification)
+	if erro != nil {
+		return 0, erro
+	}
+
+	if permissions, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		// this id stay save inside of web token as float
+		// using sprintf i be doing first a converting to string and after using ParseUint I convert to uint
+		userID, erro := strconv.ParseUint(fmt.Sprintf("%.0f", permissions["userID"]), 10, 64)
+
+		if erro != nil {
+			return 0, nil
+		}
+
+		return userID, nil
+	}
+
+	return 0, errors.New("token invalid")
 }
