@@ -13,6 +13,6 @@ func Hash(password string) ([]byte, error) {
 }
 
 // compare password and password with hash and return if for equals
-func VerifyPassword(password string, passwordWithHash string) error {
+func VerifyPassword(password, passwordWithHash string) error {
 	return bcrypt.CompareHashAndPassword([]byte(passwordWithHash), []byte(password))
 }
