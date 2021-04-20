@@ -195,3 +195,30 @@ func (rep rep_users) Unfollow(userID, followID uint64) error {
 
 	return nil
 }
+
+func (rep rep_users) FindFollowing(userID uint64) ([]models.Usuario, error) {
+	rows, erro := rep.db.Query(`
+		SELECT u.id, u.nome, u.nick, u.email, u.criadoEm 
+		FROM usuarios u INNER JOIN seguidores s ON u.id = s.seguidor_id 
+		WHERE s.usuario_id = ?
+	`, userID)
+
+	if erro != nil {
+		return nil, erro
+	}
+
+	defer rows.Close()
+
+	var users []models.Usuario
+
+	for rows.Next() {
+		var user models.Usuario
+		if erro = rows.Scan(&user.ID, &user.Nome, &user.Nick, &user.Email, &user.CriadoEm); erro != nil {
+			return nil, erro
+		}
+
+		users = append(users, user)
+	}
+
+	return users, nil
+}
