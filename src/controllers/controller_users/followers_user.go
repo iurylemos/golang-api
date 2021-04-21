@@ -10,7 +10,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func FindFollowingUser(w http.ResponseWriter, r *http.Request) {
+//find followings of any user
+func FindFollowersUser(w http.ResponseWriter, r *http.Request) {
 	parameters := mux.Vars(r)
 
 	userID, erro := strconv.ParseUint(parameters["id"], 10, 64)
@@ -31,12 +32,12 @@ func FindFollowingUser(w http.ResponseWriter, r *http.Request) {
 
 	repository := repositories.NewRepositoryUsers(db)
 
-	followings, erro := repository.FindFollowings(userID)
+	followers, erro := repository.FindFollowers(userID)
 
 	if erro != nil {
 		utils.ResponseError(w, http.StatusInternalServerError, erro)
 		return
 	}
 
-	utils.ResponseJSON(w, http.StatusOK, followings)
+	utils.ResponseJSON(w, http.StatusOK, followers)
 }
