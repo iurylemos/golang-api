@@ -250,3 +250,41 @@ func (rep rep_users) FindFollowings(userID uint64) ([]models.Usuario, error) {
 
 	return users, nil
 }
+
+// return id and password with hash this user
+func (rep rep_users) FindPasswordForID(id uint64) (string, error) {
+	rows, erro := rep.db.Query("SELECT senha FROM usuarios WHERE id = ?", id)
+
+	if erro != nil {
+		return "", erro
+	}
+
+	defer rows.Close()
+
+	var user models.Usuario
+
+	if rows.Next() {
+		if erro = rows.Scan(&user.Senha); erro != nil {
+			return "", erro
+		}
+	}
+
+	return user.Senha, nil
+}
+
+// return id and password with hash this user
+func (rep rep_users) UpdatePassword(id uint64, passwordHash string) error {
+	statement, erro := rep.db.Prepare("UPDATE usuarios SET senha = ? WHERE id = ?")
+
+	if erro != nil {
+		return erro
+	}
+
+	defer statement.Close()
+
+	if _, erro = statement.Exec(passwordHash, id); erro != nil {
+		return erro
+	}
+
+	return nil
+}
