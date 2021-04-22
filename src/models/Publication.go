@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"errors"
+	"strings"
+	"time"
+)
 
 // field Curtidas were removed the "omitempty"
 // why if i had one publication what not was "like" for no one
@@ -16,4 +20,32 @@ type Publicacao struct {
 	AutorNick string    `json:"autoNick,omitempty"`
 	Curtidas  uint64    `json:"curtidas"`
 	CriadaEm  time.Time `json:"criadaEm,omitempty"`
+}
+
+// method prepare publication to validate and format data that arrive of request
+func (publication *Publicacao) Prepare() error {
+	if erro := publication.validate(); erro != nil {
+		return erro
+	}
+
+	publication.formatter()
+
+	return nil
+}
+
+func (publication *Publicacao) validate() error {
+	if publication.Titulo == "" {
+		return errors.New("titulo não pode ficar em branco")
+	}
+
+	if publication.Conteudo == "" {
+		return errors.New("conteudo não pode ficar em branco")
+	}
+
+	return nil
+}
+
+func (publication *Publicacao) formatter() {
+	publication.Titulo = strings.TrimSpace(publication.Titulo)
+	publication.Conteudo = strings.TrimSpace(publication.Conteudo)
 }
