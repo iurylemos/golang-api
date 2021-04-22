@@ -13,6 +13,12 @@ var routePublications = []Route{
 		RequiredAuthentication: true,
 	},
 	{
+		URI:                    "/publicacoes/{id}",
+		Method:                 http.MethodGet,
+		Function:               controller_publications.FindPublication,
+		RequiredAuthentication: true,
+	},
+	{
 		URI:                    "/publicacoes",
 		Method:                 http.MethodPost,
 		Function:               controller_publications.CreatePublication,
@@ -21,7 +27,7 @@ var routePublications = []Route{
 	{
 		URI:                    "/publicacoes/{id}",
 		Method:                 http.MethodPut,
-		Function:               controller_publications.FindPublications,
+		Function:               controller_publications.UpdatePublication,
 		RequiredAuthentication: true,
 	},
 	{

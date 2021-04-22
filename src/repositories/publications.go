@@ -41,3 +41,35 @@ func (rep rep_publications) Create(publication models.Publicacao) (uint64, error
 	return uint64(lastIDInsert), nil
 
 }
+
+func (rep rep_publications) FindForID(id uint64) (models.Publicacao, error) {
+	rows, erro := rep.db.Query(`
+		SELECT p.*, u.nick FROM
+		publicacoes p INNER JOIN usuarios u 
+		ON u.id = p.autor_id WHERE p.id = ?
+	`, id)
+
+	if erro != nil {
+		return models.Publicacao{}, erro
+	}
+
+	defer rows.Close()
+
+	var publication models.Publicacao
+
+	if rows.Next() {
+		if erro = rows.Scan(
+			&publication.ID,
+			&publication.Titulo,
+			&publication.Conteudo,
+			&publication.AutorID,
+			&publication.Curtidas,
+			&publication.CriadaEm,
+			&publication.AutorNick,
+		); erro != nil {
+			return models.Publicacao{}, erro
+		}
+	}
+
+	return publication, nil
+}
