@@ -73,3 +73,41 @@ func (rep rep_publications) FindForID(id uint64) (models.Publicacao, error) {
 
 	return publication, nil
 }
+
+func (rep rep_publications) FindPublications(id uint64) ([]models.Publicacao, error) {
+	rows, erro := rep.db.Query(`
+		SELECT DISTINCT p.*, u.nick FROM publicacoes p
+		INNER JOIN usuarios u ON u.id = p.autor_id
+		INNER JOIN seguidores s ON p.autor_id = s.usuario_id
+		WHERE u.id = ? OR s.seguidor_id = ?
+		ORDER BY 1 desc
+	`, id, id)
+
+	if erro != nil {
+		return nil, erro
+	}
+
+	defer rows.Close()
+
+	var publications []models.Publicacao
+
+	for rows.Next() {
+		var publication models.Publicacao
+
+		if erro = rows.Scan(
+			&publication.ID,
+			&publication.Titulo,
+			&publication.Conteudo,
+			&publication.AutorID,
+			&publication.Curtidas,
+			&publication.CriadaEm,
+			&publication.AutorNick,
+		); erro != nil {
+			return nil, erro
+		}
+
+		publications = append(publications, publication)
+	}
+
+	return publications, nil
+}
