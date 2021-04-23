@@ -111,3 +111,19 @@ func (rep rep_publications) FindPublications(id uint64) ([]models.Publicacao, er
 
 	return publications, nil
 }
+
+func (rep rep_publications) Update(id uint64, publication models.Publicacao) error {
+	statement, erro := rep.db.Prepare("UPDATE publicacoes SET titulo = ?, conteudo = ? WHERE id = ?")
+
+	if erro != nil {
+		return erro
+	}
+
+	defer statement.Close()
+
+	if _, erro := statement.Exec(publication.Titulo, publication.Conteudo, id); erro != nil {
+		return erro
+	}
+
+	return nil
+}
