@@ -42,4 +42,16 @@ var routePublications = []Route{
 		Function:               controller_publications.FindPublicationsUser,
 		RequiredAuthentication: true,
 	},
+	{
+		URI:                    "/publicacoes/{id}/curtir",
+		Method:                 http.MethodPost,
+		Function:               controller_publications.LikePublication,
+		RequiredAuthentication: true,
+	},
+	{
+		URI:                    "/publicacoes/{id}/descurtir",
+		Method:                 http.MethodPost,
+		Function:               controller_publications.DislikePublication,
+		RequiredAuthentication: true,
+	},
 }
