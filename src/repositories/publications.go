@@ -127,3 +127,19 @@ func (rep rep_publications) Update(id uint64, publication models.Publicacao) err
 
 	return nil
 }
+
+func (rep rep_publications) Delete(id uint64) error {
+	statement, erro := rep.db.Prepare("DELETE FROM publicacoes WHERE id = ?")
+
+	if erro != nil {
+		return nil
+	}
+
+	defer statement.Close()
+
+	if _, erro = statement.Exec(id); erro != nil {
+		return erro
+	}
+
+	return nil
+}
