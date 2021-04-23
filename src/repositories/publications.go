@@ -143,3 +143,39 @@ func (rep rep_publications) Delete(id uint64) error {
 
 	return nil
 }
+
+func (rep rep_publications) FindPublicationsForUser(id uint64) ([]models.Publicacao, error) {
+	rows, erro := rep.db.Query(`
+		SELECT p.*, u.nick FROM publicacoes p
+		JOIN usuarios u ON u.id = p.autor_id
+		WHERE p.autor_id = ?
+	`, id)
+
+	if erro != nil {
+		return nil, erro
+	}
+
+	defer rows.Close()
+
+	var publications []models.Publicacao
+
+	for rows.Next() {
+		var publication models.Publicacao
+
+		if erro = rows.Scan(
+			&publication.ID,
+			&publication.Titulo,
+			&publication.Conteudo,
+			&publication.AutorID,
+			&publication.Curtidas,
+			&publication.CriadaEm,
+			&publication.AutorNick,
+		); erro != nil {
+			return nil, erro
+		}
+
+		publications = append(publications, publication)
+	}
+
+	return publications, nil
+}
