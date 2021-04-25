@@ -8,9 +8,9 @@ import (
 	"api-nos-golang/src/repositories"
 	"api-nos-golang/src/utils"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 )
 
 func Login(w http.ResponseWriter, r *http.Request) {
@@ -59,5 +59,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.ResponseJSON(w, http.StatusOK, fmt.Sprintf("Congrulations %s", token))
+	userID := strconv.FormatUint(userSalvedInDB.ID, 10)
+
+	utils.ResponseJSON(w, http.StatusOK, models.DataAuth{ID: userID, Token: token})
 }

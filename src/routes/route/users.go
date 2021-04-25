@@ -10,7 +10,7 @@ var routesUsers = []Route{
 		URI:                    "/usuarios",
 		Method:                 http.MethodPost,
 		Function:               controller_users.CreateUser,
-		RequiredAuthentication: true,
+		RequiredAuthentication: false,
 	},
 	{
 		URI:                    "/usuarios",
